@@ -16,5 +16,10 @@ namespace OMK
         {
             InitializeComponent();
         }
+
+        private void FormMain_Load(object sender, EventArgs e)
+        {
+            propertyGrid1.SelectedObject = treeView1;
+        }
     }
 }
