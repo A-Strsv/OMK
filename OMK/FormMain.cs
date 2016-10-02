@@ -85,7 +85,14 @@ namespace OMK
             tabPage.PerformLayout();
             tabControl.SelectedTab = tabPage;
             treeView.NodeMouseClick += treeView_NodeMouseClick;
+            treeView.BeforeSelect += treeView_BeforeSelect;
             return tabPage;
+        }
+
+        void treeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            System.Windows.Forms.PropertyGrid propertyGrid = (System.Windows.Forms.PropertyGrid)e.Node.TreeView.Parent.Controls.Find("propertyGrid", false)[0];
+            propertyGrid.SelectedObject = e.Node.Tag;
         }
         private void создатьToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -109,7 +116,7 @@ namespace OMK
     {
         public Boolean modified;
         public String fileName;
-        XmlDocument xmlDocument;
+        public XmlDocument xmlDocument;
         XmlElement xmlRoot;
         public System.Windows.Forms.TabPage tabPage;
         public System.Windows.Forms.TreeView treeView;

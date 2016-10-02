@@ -19,7 +19,7 @@ namespace CommandsLib
         static Commands()
         {
             toolStripItems = new System.Collections.Generic.Dictionary<String, ToolStripItem>();
-            Add("AddConnectTable", "Таблицу подключения", new System.EventHandler(AddConnectTableToolStripMenuItem_Click));
+            /*Add("AddConnectTable", "Таблицу подключения", new System.EventHandler(AddConnectTableToolStripMenuItem_Click));
             Add("AddConnector", "Разъём", new System.EventHandler(AddConnectorToolStripMenuItem_Click));
             Add("AddAdapter", "Переходное устройство", new System.EventHandler(AddAdapterToolStripMenuItem_Click));
             Add("AddMachineConnector", "Разъём для машины", new System.EventHandler(AddMachineConnectorToolStripMenuItem_Click));
@@ -30,7 +30,19 @@ namespace CommandsLib
             Add("AddFor", "Цикл", new System.EventHandler(AddForToolStripMenuItem_Click));
             Add("AddIf", "Условие", new System.EventHandler(AddIfToolStripMenuItem_Click));
             Add("AddCommutator", "Команду коммутатора", new System.EventHandler(AddCommutatorToolStripMenuItem_Click));
-            Add("AddMeasure", "Измерение", new System.EventHandler(AddMeasureToolStripMenuItem_Click));
+            Add("AddMeasure", "Измерение", new System.EventHandler(AddMeasureToolStripMenuItem_Click));*/
+            Add("AddConnectTable", "Таблицу подключения", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddConnector", "Разъём", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddAdapter", "Переходное устройство", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddMachineConnector", "Разъём для машины", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddGroup", "Группу", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddProgram", "Программу", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddBlock", "Блок", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddVariable", "Выражение", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddFor", "Цикл", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddIf", "Условие", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddCommutator", "Команду коммутатора", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddMeasure", "Измерение", new System.EventHandler(AddToolStripMenuItem_Click));
             Add("Run", "Выполнить", new System.EventHandler(RunToolStripMenuItem_Click));
             Add("Rename", "Переименовать", new System.EventHandler(RenameToolStripMenuItem_Click));
             Add("Close", "Закрыть", new System.EventHandler(CloseToolStripMenuItem_Click));
@@ -46,6 +58,12 @@ namespace CommandsLib
             connectorTableNode.SelectedImageIndex = 1;
             treeNode.Nodes.Add(connectorTableNode);
             treeNode.Expand();*/
+        }
+        public static void AddToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ToolStripMenuItem toolStripMenuItem = (ToolStripMenuItem)sender;
+            String type = toolStripMenuItem.Name.ToUpper().Substring(3).Replace("TOOLSTRIPMENUITEM", "");
+            NodeClasses.UniversalNode.AddNode(contextMenuTreeNode, type);
         }
         public static void AddConnectTableToolStripMenuItem_Click(object sender, EventArgs e)
         {
