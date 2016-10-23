@@ -10,6 +10,7 @@ using System.Windows.Forms;
 
 using System.Xml;
 using NodeClasses;
+using TestBenchClass;
 
 namespace OMK
 {
@@ -19,9 +20,13 @@ namespace OMK
         {
             InitializeComponent();
         }
-
+        TestBench testBench;
         private void FormMain_Load(object sender, EventArgs e)
         {
+            testBench = new TestBench();
+            testBench.Write = Write;
+            testBench.WriteSerialLog = WriteSerialLog;
+            CommandsLib.Commands.formMain = this;
         }
         private void treeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
@@ -88,6 +93,41 @@ namespace OMK
             treeView.BeforeSelect += treeView_BeforeSelect;
             return tabPage;
         }
+        delegate void void_StrColDelegate(string S, Color Color);
+        public void Write(string S, Color Color)
+        {
+            if (InvokeRequired)
+                Invoke(new void_StrColDelegate(Write), new object[] { S, Color });
+            else
+            {
+                richTextBoxLog.SelectionStart = richTextBoxLog.TextLength;
+                richTextBoxLog.SelectionColor = Color;
+                System.Drawing.Font OldFont = richTextBoxLog.SelectionFont;
+                System.Drawing.Font NewFont = new System.Drawing.Font(OldFont, FontStyle.Bold);
+                richTextBoxLog.SelectionFont = NewFont;
+                richTextBoxLog.AppendText(S);
+                richTextBoxLog.SelectionFont = OldFont;
+                richTextBoxLog.ScrollToCaret();
+            }
+        }
+        delegate void void_StrStrColDelegate(string s1, string s2, Color Color);
+        public void WriteSerialLog(string s1, string s2, Color color)
+        {
+            if (InvokeRequired)
+                Invoke(new void_StrStrColDelegate(WriteSerialLog), new object[] { s1, s2, color });
+            else
+            {
+                richTextBoxLog.SelectionStart = richTextBoxLog.TextLength;
+                richTextBoxLog.SelectionColor = color;
+                System.Drawing.Font OldFont = richTextBoxLog.SelectionFont;
+                System.Drawing.Font NewFont = new System.Drawing.Font(OldFont, FontStyle.Bold);
+                richTextBoxLog.SelectionFont = NewFont;
+                richTextBoxLog.AppendText(s1);
+                richTextBoxLog.SelectionFont = OldFont;
+                richTextBoxLog.AppendText(s2);
+                richTextBoxLog.ScrollToCaret();
+            }
+        }
 
         void treeView_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
@@ -111,8 +151,47 @@ namespace OMK
                 TabPageSatellite tabPageSatellite = new TabPageSatellite(openFileDialog.FileName, TabPageSatellite.ConstructorMode.Open, tabPage);
             }
         }
+
+        private void tESTToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            /*dmm.Measurement.MeasurementFunction = Agilent34410MeasurementFunctionEnum.Agilent34410MeasurementFunctionContinuity;
+            System.Threading.Thread.Sleep(100);
+            dmm.Measurement.Read();
+            System.Threading.Thread.Sleep(100);
+            dmm.Measurement.Read();
+            System.Threading.Thread.Sleep(100);
+            dmm.Measurement.Read();
+            System.Threading.Thread.Sleep(100);
+            dmm.Measurement.Read();
+            System.Threading.Thread.Sleep(100);
+            dmm.Measurement.Read();
+            System.Threading.Thread.Sleep(100);
+            //MessageBox.Show(dmm.Voltage.DCVoltage.Measure(10, Agilent34410ResolutionEnum.Agilent34410ResolutionDefault).ToString());
+            dmm.Display.ClearDisplay(1);
+            dmm.Display.DisplayText[1] = "   MAWA   ";
+            dmm.Display.DisplayText[2] = " UBETO4EK ";
+            dmm.Close();*/
+        }
+
+        private void сохранитьToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TabPageSatellite tabPageSatellite = (TabPageSatellite)tabControl.SelectedTab.Tag;
+            tabPageSatellite.xmlDocument.Save(tabPageSatellite.fileName);
+        }
+        public TextBox protocolWriteTextBox;
+        public void ProtocolWrite(string S, Color Color)
+        {
+            if (InvokeRequired)
+                Invoke(new void_StrColDelegate(ProtocolWrite), new object[] { S, Color });
+            else
+            {
+                protocolWriteTextBox.AppendText(S);
+                protocolWriteTextBox.ScrollToCaret();
+            }
+        }
+
     }
-    public class TabPageSatellite
+    public class TabPageSatellite : Control
     {
         public Boolean modified;
         public String fileName;
@@ -120,6 +199,7 @@ namespace OMK
         XmlElement xmlRoot;
         public System.Windows.Forms.TabPage tabPage;
         public System.Windows.Forms.TreeView treeView;
+        public System.Windows.Forms.TextBox textBox;
         public enum ConstructorMode { New, Open, OpenAndTranslate}
         public TabPageSatellite(String fileName, ConstructorMode constructorMode, System.Windows.Forms.TabPage tabPage)
         {
@@ -127,6 +207,7 @@ namespace OMK
             this.tabPage = tabPage;
             Control.ControlCollection controlCollection = (Control.ControlCollection)typeof(System.Windows.Forms.TabPage).GetProperty("Controls").GetValue(tabPage);
             treeView = (System.Windows.Forms.TreeView)controlCollection.OfType<System.Windows.Forms.TreeView>().First<System.Windows.Forms.TreeView>();
+            textBox = (System.Windows.Forms.TextBox)controlCollection.OfType<System.Windows.Forms.TextBox>().First<System.Windows.Forms.TextBox>();
             this.fileName = fileName;
             switch (constructorMode)
             {
@@ -161,5 +242,6 @@ namespace OMK
                     break;
             }
         }
+
     }
 }

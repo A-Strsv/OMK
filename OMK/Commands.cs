@@ -6,6 +6,7 @@ namespace CommandsLib
 {
     public static class Commands
     {
+        public static OMK.FormMain formMain;
         public static System.Collections.Generic.Dictionary<String, ToolStripItem> toolStripItems;
         public static TreeNode contextMenuTreeNode;
         private static void Add(String name, String text, System.EventHandler target)
@@ -31,18 +32,26 @@ namespace CommandsLib
             Add("AddIf", "Условие", new System.EventHandler(AddIfToolStripMenuItem_Click));
             Add("AddCommutator", "Команду коммутатора", new System.EventHandler(AddCommutatorToolStripMenuItem_Click));
             Add("AddMeasure", "Измерение", new System.EventHandler(AddMeasureToolStripMenuItem_Click));*/
-            Add("AddConnectTable", "Таблицу подключения", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddConnector", "Разъём", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddAdapter", "Переходное устройство", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddMachineConnector", "Разъём для машины", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddGroup", "Группу", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddProgram", "Программу", new System.EventHandler(AddToolStripMenuItem_Click));
             Add("AddBlock", "Блок", new System.EventHandler(AddToolStripMenuItem_Click));
             Add("AddVariable", "Выражение", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddFor", "Цикл", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddIf", "Условие", new System.EventHandler(AddToolStripMenuItem_Click));
-            Add("AddCommutator", "Команду коммутатора", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddGroup", "Группу", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddDialog", "Диалог", new System.EventHandler(AddToolStripMenuItem_Click));
             Add("AddMeasure", "Измерение", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddCommutator", "Команду коммутатора", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddRK104Close", "Набор точки коммутатора", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddStop", "Останов", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddPause", "Паузу", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddAdapter", "Переходное устройство", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddWrite", "Печать в протокол", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddProgram", "Программу", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddConnector", "Разъём", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddMachineConnector", "Разъём для машины", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddRK104Reset", "Сброс коммутатора", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddRK104Open", "Снятие точки коммутатора", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddMessage", "Сообщение", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddConnectTable", "Таблицу подключения", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddIf", "Условие", new System.EventHandler(AddToolStripMenuItem_Click));
+            Add("AddFor", "Цикл", new System.EventHandler(AddToolStripMenuItem_Click));
             Add("Run", "Выполнить", new System.EventHandler(RunToolStripMenuItem_Click));
             Add("Rename", "Переименовать", new System.EventHandler(RenameToolStripMenuItem_Click));
             Add("Close", "Закрыть", new System.EventHandler(CloseToolStripMenuItem_Click));
@@ -238,9 +247,22 @@ namespace CommandsLib
         public static void AddMeasureToolStripMenuItem_Click(object sender, EventArgs e)
         {
         }
+        public static void OnProgramEnd()
+        {
+            MessageBox.Show("End.");
+        }
         public static void Run(TreeNode treeNode)
         {
-            MessageBox.Show(treeNode.Text);
+            //MessageBox.Show(treeNode.Text);
+            NodeClasses.UniversalNode universalNode = (NodeClasses.UniversalNode)treeNode.Tag;
+            XmlNode xmlNode = universalNode.xmlNode;
+            Interpreter.Interpreter interpreter = new Interpreter.Interpreter(xmlNode, TestBenchClass.TestBench.testBench);
+            interpreter.OnProgramEnd += OnProgramEnd;
+            System.Windows.Forms.TreeView treeView = treeNode.TreeView;
+            interpreter.tabPageSatellite = (OMK.TabPageSatellite)((System.Windows.Forms.TabPage)treeView.Parent).Tag;
+            formMain.protocolWriteTextBox = interpreter.tabPageSatellite.textBox;
+            interpreter.ProtocolWrite = formMain.ProtocolWrite;
+            interpreter.EventHandler();
         }
         public static void RunToolStripMenuItem_Click(object sender, EventArgs e)
         {
